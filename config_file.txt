@@ -1,0 +1,13 @@
+canvas 20 12
+output output.txt
+empty .
+rectangle 3 2 2 2 #
+rectangle 14 6 3 3 #
+rectangle 0 2 3 2 .
+rectangle 13 6 1 1 .
+rectangle 12 7 2 1 .
+rectangle 11 8 3 1 .
+rectangle 10 9 7 1 .
+rectangle 9 10 8 1 .
+circle 17 2 0 *
+light 15 3
