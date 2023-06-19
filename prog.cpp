@@ -117,15 +117,37 @@ private:
     char symbol;
 };
 
+class Light {
+public:
+    Light(int x, int y, char shadowSymbol)
+        : x(x), y(y), shadowSymbol(shadowSymbol) {}
+
+    void castShadow(Canvas& canvas) const { // Add const here
+        for (int row = 0; row < canvas.getHeight(); ++row) {
+            for (int col = 0; col < canvas.getWidth(); ++col) {
+                if (!canvas.getPixel(col, row) && canvas.getPixel(col, row) != ' ') {
+                    canvas.setPixel(col + x, row + y, shadowSymbol);
+                }
+            }
+        }
+    }
+
+private:
+    int x;
+    int y;
+    char shadowSymbol;
+};
+
+
 std::vector<Figure*> parseConfigFile(const std::string& filename, int& canvasWidth, int& canvasHeight,
-                                    std::string& outputFile, char& emptySymbol, std::vector<Canvas>& lights) {
+                                    std::string& outputFile, char& emptySymbol, std::vector<Light>& lights) {
     std::vector<Figure*> figures;
 
     std::ifstream file(filename);
     std::string line;
     if (file.is_open()) {
         while (std::getline(file, line)) {
-            std::istringstream iss(line); 
+            std::istringstream iss(line);
 
             std::string command;
             iss >> command;
@@ -148,8 +170,9 @@ std::vector<Figure*> parseConfigFile(const std::string& filename, int& canvasWid
                 figures.push_back(new Circle(x, y, radius, symbol));
             } else if (command == "light") {
                 int x, y;
-                iss >> x >> y;
-                lights.push_back(Canvas(x, y));
+                char shadowSymbol;
+                iss >> x >> y >> shadowSymbol;
+                lights.push_back(Light(x, y, shadowSymbol));
             }
         }
         file.close();
@@ -166,15 +189,9 @@ void drawFiguresOnCanvas(const std::vector<Figure*>& figures, Canvas& canvas) {
     }
 }
 
-void castShadows(const std::vector<Canvas>& lights, Canvas& canvas) {
-    for (const Canvas& light : lights) {
-        for (int row = 0; row < canvas.getHeight(); ++row) {
-            for (int col = 0; col < canvas.getWidth(); ++col) {
-                if (!light.getPixel(col, row) && canvas.getPixel(col, row) != ' ') {
-                    canvas.setPixel(col + 1, row + 1, '.');
-                }
-            }
-        }
+void castShadows(const std::vector<Light>& lights, Canvas& canvas) {
+    for (const Light& light : lights) {
+        light.castShadow(canvas);
     }
 }
 
@@ -190,7 +207,7 @@ int main(int argc, char* argv[]) {
     int canvasHeight = 0;
     std::string outputFile;
     char emptySymbol = ' ';
-    std::vector<Canvas> lights;
+    std::vector<Light> lights;
 
     std::vector<Figure*> figures = parseConfigFile(configFile, canvasWidth, canvasHeight, outputFile, emptySymbol, lights);
 
@@ -204,8 +221,11 @@ int main(int argc, char* argv[]) {
     drawFiguresOnCanvas(figures, canvas);
     castShadows(lights, canvas);
 
-    canvas.saveToFile(outputFile);
+    if (!outputFile.empty()) {
+        canvas.saveToFile(outputFile);
+    }
 
+    // Clean up dynamically allocated figures
     for (Figure* figure : figures) {
         delete figure;
     }
@@ -213,21 +233,3 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-/*
-config_file.txt:
-
-canvas 20 12
-output output.txt
-empty .
-rectangle 3 2 2 2 #
-rectangle 14 6 3 3 #
-rectangle 0 2 3 2 .
-rectangle 13 6 1 1 .
-rectangle 12 7 2 1 .
-rectangle 11 8 3 1 .
-rectangle 10 9 7 1 .
-rectangle 9 10 8 1 .
-circle 17 2 0 *
-light 15 3
-
-*/
