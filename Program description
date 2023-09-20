@@ -1,0 +1,59 @@
+Program description:
+
+This program is a simple drawing tool that creates pictures on canvas and saves them to a file. The program is written in C++ and uses an object-oriented approach to creating images on canvas.
+
+How to download the repository:
+
+Make sure you have Git version control installed on your computer.
+Open a terminal or console.
+In the selected directory where you want to place the repository, execute the command:
+
+git clone https://adres_repozytorium.git
+Replace https://adres_repozytorium.git with the address of your actual repository.
+How to compile the program:
+
+Make sure you have a C++ compiler installed (e.g. g++).
+Go to the directory with the program repository.
+Compile the program by executing the command:
+
+g++ -o program program.cpp
+Where program.cpp is the name of the program's source file.
+How to use the program:
+
+The program is launched from the command line. Here's how to use it:
+
+./program <config_file>
+<config_file>: Path to the configuration file that specifies what is drawn on the canvas.
+Configuration file structure:
+
+The configuration file should contain the following information:
+
+canvas <width> <height>: Specify the canvas size, where <width> is the width and <height> is the height.
+output <filename>: Specify the filename to which the image will be saved (can be blank if you don't want to save the image).
+empty <symbol>: Specify a symbol representing an empty space on the canvas.
+You can then define figures and lights in the configuration file using the following commands:
+
+rectangle <x> <y> <width> <height> <symbol>: Specify a rectangle with the upper left corner at (<x>, <y>), width <width>, height <height> and symbol <symbol> .
+circle <x> <y> <radius> <symbol>: Specify a circle centered at (<x>, <y>), radius <radius> and symbol <symbol>.
+light <x> <y> <shadowSymbol>: Specify a light with position (<x>, <y>) and a shadow symbol <shadowSymbol>.
+Configuration file example:
+
+
+canvas 20 12
+output output.txt
+empty .
+rectangle 3 2 2 2 #
+rectangle 14 6 3 3 #
+rectangle 0 2 3 2 .
+rectangle 13 6 1 1 .
+rectangle 12 7 2 1 .
+rectangle 11 8 3 1 .
+rectangle 10 9 7 1 .
+rectangle 9 10 8 1 .
+circle 17 2 0 *
+light 15 3
+
+
+This configuration file will create a 20X12 canvas, save the image to the "output.txt" file, use a dot "." as a blank space symbol, it will draw a rectangle "#", a circle "*" of light on the canvas.
+
+After starting the program with the appropriate configuration file, an image will be created in accordance with the given parameters.
